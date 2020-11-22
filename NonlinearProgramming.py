@@ -18,13 +18,12 @@ def GradientDescent(x):
     return f(x)
 
 
-if __name__ = '__main__'
+if __name__ = '__main__':
+    x = 10
+    n = 10
+    alpha_bar = 0.1
+    c = 0.8
+    rho = 0.3
+    gamma = 0.4
 
-x = 10
-n = 10
-alpha_bar = 0.1
-c = 0.8
-rho = 0.3
-gamma = 0.4
-
-print(GradientDescent(x))
+    print(GradientDescent(x))
