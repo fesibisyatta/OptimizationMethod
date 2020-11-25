@@ -21,6 +21,6 @@ if __name__ == '__main__':
     n = 10
     rho = 0.39
     c = 0.08
-    alpha_bar = 0.01
+    alpha_bar = rho**2 - x*c
     gamma = 0.4
     print(GradientDescentMethod(x))
