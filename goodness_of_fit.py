@@ -62,3 +62,63 @@ theo_freq(obs)
 # %%
 chi_sq(obs, theo_freq(obs))
 # %%
+
+import numpy as np
+from scipy import stats
+import matplotlib.pyplot as plt
+
+x = np.array([8.2, 7.5, 8.7, 8.4, 9.6])
+dataset = np.array([4.95, 5.02, 5.08, 4.90, 5.12,
+                    5.19, 4.80, 4.87, 4.98, 4.58, 
+                    4.81, 5.18, 5.25, 5.05, 4.79, 
+                    5.57, 5.01, 5.57, 5.01, 4.81, 
+                    5.13, 5.04, 5.13, 5.16, 4.69])
+
+def t_dist(x , theta):
+    return 1/(1 + (x - theta)**2)
+
+def likelihood(theta, datalist, k):
+    w = 0
+    for i in range(k):
+        w = t_dist(datalist, theta)
+        theta = (w*datalist).sum()/w.sum()
+    return w, theta
+
+def trim(x, k):
+    x = sorted(x)[k:-k]
+    return np.mean(x)
+
+def huber(x):
+    x = np.array(sorted(x))
+    n = len(x)
+    s = (np.floor(n/2) + 1)/2
+    if isinstance(s, float):
+        x_s = (x[int(s + 0.5) -1] + x[int(s - 0.5) -1])*0.5
+        x_ns1 = (x[int(n - s + 1 + 0.5) -1] + x[int(n - s + 1 - 0.5) -1])*0.5
+        d = x_ns1 - x_s
+    else:
+        d = x[-s] - x[s]
+    c = 0.5 * d
+    x_med = np.median(x)
+    cond_u = np.array(x <= x_med + c)
+    cond_l = np.array(x >= x_med - c)
+    both = cond_u*cond_l
+    m = (both).sum()
+    S = x[both].sum()
+    m_U = (~cond_u).sum()
+    m_L = (~cond_l).sum()
+    theta_H = (S + c * (m_U - m_L))/m
+    return theta_H
+
+
+for i in range(20):
+    plt.scatter(i, likelihood(theta = 8.4, datalist = x, k = i)[1])
+plt.show()
+
+llist = [likelihood(theta = 8.4, datalist = x, k = i)[1] for i in range(200)]
+plt.plot(list(range(len(llist))), llist)
+plt.show()
+
+trim(dataset, 3)
+
+huber(dataset)
